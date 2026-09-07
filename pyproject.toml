@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mini-music-ai"
+version = "0.1.0"
+description = "Prototype AI music generation training pipeline"
+requires-python = ">=3.12"
+
+dependencies = [
+    "torch==2.14.0",
+    "transformers==5.16.1",
+    "numpy==2.5.3",
+    "soundfile",
+    "scipy",
+]

@@ -1,0 +1,9 @@
+pyproject.toml
+run.py
+step1_audio_preparation.py
+mini_music_ai.egg-info/PKG-INFO
+mini_music_ai.egg-info/SOURCES.txt
+mini_music_ai.egg-info/dependency_links.txt
+mini_music_ai.egg-info/entry_points.txt
+mini_music_ai.egg-info/requires.txt
+mini_music_ai.egg-info/top_level.txt

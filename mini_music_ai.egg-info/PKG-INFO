@@ -1,0 +1,10 @@
+Metadata-Version: 2.4
+Name: mini-music-ai
+Version: 0.1.0
+Summary: Prototype AI music generation training pipeline
+Requires-Python: >=3.12
+Requires-Dist: torch==2.14.0
+Requires-Dist: transformers==5.16.1
+Requires-Dist: numpy==2.5.3
+Requires-Dist: soundfile
+Requires-Dist: scipy

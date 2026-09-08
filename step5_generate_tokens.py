@@ -11,6 +11,11 @@ from audio_length import (
 )
 
 
+TEMPERATURE = 0.8
+
+TOP_K = 10
+
+
 # Generate new EnCodec tokens using the trained Transformer
 def generate_tokens(
     trained_model_path,
@@ -132,15 +137,49 @@ def generate_tokens(
                 :,
             ]
 
-            # Choose the most likely token for every codebook
-            next_tokens = torch.argmax(
+            # Adjust how strongly the model favors its most likely choices
+            next_token_logits = (
+                next_token_logits
+                / TEMPERATURE
+            )
+
+            # Keep only the model's most likely token choices
+            top_values, top_indices = torch.topk(
                 next_token_logits,
+                k=TOP_K,
                 dim=-1,
             )
 
-            # Add a time dimension to the new tokens
-            next_tokens = next_tokens.unsqueeze(
-                -1
+            # Convert the selected logits into probabilities
+            top_probabilities = torch.softmax(
+                top_values,
+                dim=-1,
+            )
+
+            # Flatten the batch and codebook dimensions for sampling
+            flattened_probabilities = top_probabilities.reshape(
+                -1,
+                TOP_K,
+            )
+
+            # Randomly choose one of the strong candidate tokens
+            sampled_positions = torch.multinomial(
+                flattened_probabilities,
+                num_samples=1,
+            )
+
+            # Restore the batch and codebook dimensions
+            sampled_positions = sampled_positions.reshape(
+                1,
+                num_codebooks,
+                1,
+            )
+
+            # Convert the sampled positions back into real EnCodec token IDs
+            next_tokens = torch.gather(
+                top_indices,
+                dim=-1,
+                index=sampled_positions,
             )
 
             # Append the predicted tokens to the generated sequence
@@ -201,6 +240,18 @@ def generate_tokens(
         "Generated search duration:",
         generation_seconds,
         "seconds",
+    )
+
+    # Print the sampling settings used for generation
+    print(
+        "Sampling temperature:",
+        TEMPERATURE,
+    )
+
+    # Print how many candidate tokens were considered
+    print(
+        "Top-K sampling:",
+        TOP_K,
     )
 
     # Confirm that token generation finished

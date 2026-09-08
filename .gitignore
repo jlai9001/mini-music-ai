@@ -3,8 +3,7 @@ __pycache__/
 *.pyc
 *.egg-info/
 
-outputs/*
-!outputs/.gitkeep
+outputs/
 
 audio/training_resampled/*
-!audio/training_resampled/.gitkeep
+audio/ending_training_resampled/*

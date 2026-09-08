@@ -7,6 +7,56 @@ from scipy.signal import resample_poly
 
 TARGET_SAMPLE_RATE = 32000
 
+TARGET_PEAK_DBFS = -3.0
+
+MIN_PEAK_AMPLITUDE = 0.000001
+
+
+# Normalize the waveform so every recording has a similar peak level
+def normalize_audio(
+    audio,
+):
+    # Measure the loudest absolute waveform value
+    current_peak = np.max(
+        np.abs(
+            audio
+        )
+    )
+
+    # Leave effectively silent audio unchanged
+    if current_peak < MIN_PEAK_AMPLITUDE:
+        return audio
+
+    # Convert the target decibel level into waveform amplitude
+    target_peak = 10 ** (
+        TARGET_PEAK_DBFS
+        / 20
+    )
+
+    # Calculate how much the waveform needs to be scaled
+    gain = (
+        target_peak
+        / current_peak
+    )
+
+    # Apply the same gain to the entire recording
+    normalized_audio = (
+        audio
+        * gain
+    )
+
+    # Protect against accidental values outside the valid audio range
+    normalized_audio = np.clip(
+        normalized_audio,
+        -1.0,
+        1.0,
+    )
+
+    # Return 32-bit floating-point audio
+    return normalized_audio.astype(
+        np.float32
+    )
+
 
 # Prepare one audio file as 32 kHz mono audio
 def resample_audio(
@@ -54,6 +104,11 @@ def resample_audio(
     # Convert the audio into 32-bit floating point samples
     audio = audio.astype(
         np.float32
+    )
+
+    # Normalize the recording to the common training volume
+    audio = normalize_audio(
+        audio
     )
 
     # Create the output folder if necessary

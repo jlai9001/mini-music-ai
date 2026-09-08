@@ -3,8 +3,11 @@ import argparse
 from step1_audio_preparation import resample_training_audio
 from step2_audio_encoding import encode_training_audio
 from step3_training_sequences import build_training_sequences
+from step3B_ending_training_sequences import build_ending_training_sequences
 from step4_train_model import train_model
+from step4B_train_ending_model import train_ending_model
 from step5_generate_tokens import generate_tokens
+from step5B_generate_ending import generate_ending
 from step6_audio_decoding import decode_generated_audio
 
 
@@ -25,9 +28,21 @@ def main():
     # Step 1: prepare all training audio as 32 kHz mono WAV files
     resampled_audio_paths = resample_training_audio()
 
+    # Prepare the clean-ending training audio separately
+    ending_resampled_audio_paths = resample_training_audio(
+        input_folder="audio/ending_training",
+        output_folder="audio/ending_training_resampled",
+    )
+
     # Step 2: convert the prepared audio into EnCodec tokens
     encoded_audio_paths = encode_training_audio(
         resampled_audio_paths
+    )
+
+    # Convert the prepared clean-ending audio into EnCodec tokens separately
+    ending_encoded_audio_paths = encode_training_audio(
+        ending_resampled_audio_paths,
+        output_folder="outputs/ending_encoded",
     )
 
     # Step 3: create next-token training sequences
@@ -35,9 +50,20 @@ def main():
         encoded_audio_paths
     )
 
+    # Step 3B: create clean-ending training sequences
+    ending_training_dataset_path = build_ending_training_sequences(
+        ending_encoded_audio_paths
+    )
+
     # Step 4: train the generative Transformer
     trained_model_path = train_model(
         training_dataset_path
+    )
+
+    # Step 4B: fine-tune a clean-ending specialist from the main model
+    ending_model_path = train_ending_model(
+        trained_model_path,
+        ending_training_dataset_path,
     )
 
     # Step 5: generate new EnCodec tokens for the requested duration
@@ -46,9 +72,15 @@ def main():
         seconds=args.seconds,
     )
 
-    # Step 6: decode the generated tokens into a WAV file
+    # Step 5B: generate a clean ending after the main audio
+    generated_tokens_with_ending_path = generate_ending(
+        generated_tokens_path,
+        ending_model_path,
+    )
+
+    # Step 6: decode the generated audio including the clean ending
     decode_generated_audio(
-        generated_tokens_path
+        generated_tokens_with_ending_path
     )
 
 

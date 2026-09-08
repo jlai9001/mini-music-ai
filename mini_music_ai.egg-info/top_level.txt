@@ -2,7 +2,10 @@ audio_length
 run
 step1_audio_preparation
 step2_audio_encoding
+step3B_training_sequences
 step3_training_sequences
+step4B_train_ending_model
 step4_train_model
+step5B_generate_ending
 step5_generate_tokens
 step6_audio_decoding

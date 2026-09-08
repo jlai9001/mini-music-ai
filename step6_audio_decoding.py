@@ -45,11 +45,14 @@ def decode_generated_audio(
         "audio_codes"
     ]
 
-    # Get the duration the user originally requested
-    requested_seconds = float(
-        generated_data[
-            "requested_seconds"
-        ]
+    # Get the final audio duration including the clean ending when available
+    output_seconds = float(
+        generated_data.get(
+            "total_seconds",
+            generated_data[
+                "requested_seconds"
+            ],
+        )
     )
 
     # Load the pretrained EnCodec decoder
@@ -116,9 +119,9 @@ def decode_generated_audio(
     # Move the waveform back onto the CPU
     generated_audio = generated_audio.detach().cpu()
 
-    # Convert the requested duration into waveform samples
+    # Convert the final output duration into waveform samples
     target_sample_count = seconds_to_samples(
-        requested_seconds
+        output_seconds
     )
 
     # Keep only the requested amount of audio

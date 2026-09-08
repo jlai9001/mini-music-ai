@@ -2,6 +2,7 @@ TOKENS_PER_SECOND = 50
 
 SAMPLE_RATE = 32000
 
+ENDING_DURATION_SECONDS = 1.5
 
 # Convert a requested duration into the number of EnCodec token positions
 def seconds_to_tokens(

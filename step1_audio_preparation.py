@@ -131,82 +131,8 @@ def resample_audio(
         output_path
     )
 
-
-# Prepare every WAV file inside the training folder
 def resample_training_audio(
     input_folder="audio/training",
     output_folder="audio/training_resampled",
 ):
-    # Convert the folder paths into Path objects
-    input_folder = Path(
-        input_folder
-    )
-
-    output_folder = Path(
-        output_folder
-    )
-
-    # Create the output folder if necessary
-    output_folder.mkdir(
-        parents=True,
-        exist_ok=True,
-    )
-
-    # Store the paths of every prepared recording
-    output_paths = []
-
-    # Find every WAV training recording
-    input_paths = sorted(
-        path
-        for path in input_folder.iterdir()
-        if (
-            path.is_file()
-            and path.suffix.lower() == ".wav"
-        )
-    )
-
-    # Make sure training audio was found
-    if not input_paths:
-        raise RuntimeError(
-            "No WAV training files were found in audio/training"
-        )
-
-    # Process each training recording
-    for input_path in input_paths:
-        # Build the destination path
-        output_path = (
-            output_folder
-            / input_path.name
-        )
-
-        # Prepare the current recording
-        prepared_path = resample_audio(
-            str(
-                input_path
-            ),
-            str(
-                output_path
-            ),
-        )
-
-        # Remember the prepared recording
-        output_paths.append(
-            prepared_path
-        )
-
-        # Show progress
-        print(
-            "Prepared:",
-            prepared_path,
-        )
-
-    # Show how many recordings were processed
-    print(
-        "\nTraining files prepared:",
-        len(
-            output_paths
-        ),
-    )
-
-    # Return every prepared file path
-    return output_paths
+    pass

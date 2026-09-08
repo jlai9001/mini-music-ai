@@ -26,7 +26,10 @@ py-modules = [
     "step1_audio_preparation",
     "step2_audio_encoding",
     "step3_training_sequences",
+    "step3B_training_sequences",
     "step4_train_model",
+    "step4B_train_ending_model",
     "step5_generate_tokens",
+    "step5B_generate_ending",
     "step6_audio_decoding",
 ]

@@ -4,7 +4,9 @@ run.py
 step1_audio_preparation.py
 step2_audio_encoding.py
 step3_training_sequences.py
+step4B_train_ending_model.py
 step4_train_model.py
+step5B_generate_ending.py
 step5_generate_tokens.py
 step6_audio_decoding.py
 mini_music_ai.egg-info/PKG-INFO

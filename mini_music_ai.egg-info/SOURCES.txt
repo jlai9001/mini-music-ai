@@ -3,6 +3,7 @@ pyproject.toml
 run.py
 step1_audio_preparation.py
 step2_audio_encoding.py
+step3B_ending_training_sequences.py
 step3_training_sequences.py
 step4B_train_ending_model.py
 step4_train_model.py

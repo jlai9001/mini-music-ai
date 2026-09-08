@@ -22,49 +22,62 @@ def main():
         default=5.0,
     )
 
+    # Allow the full training pipeline to be explicitly requested
+    parser.add_argument(
+        "--full-training",
+        action="store_true",
+    )
+
     # Read the command-line arguments
     args = parser.parse_args()
 
-    # Step 1: prepare all training audio as 32 kHz mono WAV files
-    resampled_audio_paths = resample_training_audio()
+    # Run the full training pipeline only when explicitly requested
+    if args.full_training:
+        # Step 1: prepare all training audio as 32 kHz mono WAV files
+        resampled_audio_paths = resample_training_audio()
 
-    # Prepare the clean-ending training audio separately
-    ending_resampled_audio_paths = resample_training_audio(
-        input_folder="audio/ending_training",
-        output_folder="audio/ending_training_resampled",
-    )
+        # Prepare the clean-ending training audio separately
+        ending_resampled_audio_paths = resample_training_audio(
+            input_folder="audio/ending_training",
+            output_folder="audio/ending_training_resampled",
+        )
 
-    # Step 2: convert the prepared audio into EnCodec tokens
-    encoded_audio_paths = encode_training_audio(
-        resampled_audio_paths
-    )
+        # Step 2: convert the prepared audio into EnCodec tokens
+        encoded_audio_paths = encode_training_audio(
+            resampled_audio_paths
+        )
 
-    # Convert the prepared clean-ending audio into EnCodec tokens separately
-    ending_encoded_audio_paths = encode_training_audio(
-        ending_resampled_audio_paths,
-        output_folder="outputs/ending_encoded",
-    )
+        # Convert the prepared clean-ending audio into EnCodec tokens separately
+        ending_encoded_audio_paths = encode_training_audio(
+            ending_resampled_audio_paths,
+            output_folder="outputs/ending_encoded",
+        )
 
-    # Step 3: create next-token training sequences
-    training_dataset_path = build_training_sequences(
-        encoded_audio_paths
-    )
+        # Step 3: create next-token training sequences
+        training_dataset_path = build_training_sequences(
+            encoded_audio_paths
+        )
 
-    # Step 3B: create clean-ending training sequences
-    ending_training_dataset_path = build_ending_training_sequences(
-        ending_encoded_audio_paths
-    )
+        # Create clean-ending training sequences
+        ending_training_dataset_path = build_ending_training_sequences(
+            ending_encoded_audio_paths
+        )
 
-    # Step 4: train the generative Transformer
-    trained_model_path = train_model(
-        training_dataset_path
-    )
+        # Step 4: train the generative Transformer
+        trained_model_path = train_model(
+            training_dataset_path
+        )
 
-    # Step 4B: fine-tune a clean-ending specialist from the main model
-    ending_model_path = train_ending_model(
-        trained_model_path,
-        ending_training_dataset_path,
-    )
+        # Fine-tune a clean-ending specialist from the main model
+        ending_model_path = train_ending_model(
+            trained_model_path,
+            ending_training_dataset_path,
+        )
+
+    # Otherwise, use the saved stable models
+    else:
+        trained_model_path = "models/codec_transformer.pt"
+        ending_model_path = "models/ending_transformer.pt"
 
     # Step 5: generate new EnCodec tokens for the requested duration
     generated_tokens_path = generate_tokens(

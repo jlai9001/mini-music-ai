@@ -196,7 +196,7 @@ class CodecTransformer(nn.Module):
 def train_model(
     training_dataset_path,
     output_path="outputs/codec_transformer.pt",
-    epochs=150,
+    epochs=100,
     batch_size=32,
 ):
     # Choose the GPU when CUDA is available

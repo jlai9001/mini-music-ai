@@ -22,5 +22,11 @@ run = "run:main"
 [tool.setuptools]
 py-modules = [
     "run",
+    "audio_length",
     "step1_audio_preparation",
+    "step2_audio_encoding",
+    "step3_training_sequences",
+    "step4_train_model",
+    "step5_generate_tokens",
+    "step6_audio_decoding",
 ]

@@ -10,7 +10,7 @@ from transformers.models.encodec.modeling_encodec import EncodecDecoderOutput
 
 from audio_length import (
     SAMPLE_RATE,
-    find_clean_end,
+    seconds_to_samples,
 )
 
 MODEL_NAME = "facebook/encodec_32khz"
@@ -116,19 +116,18 @@ def decode_generated_audio(
     # Move the waveform back onto the CPU
     generated_audio = generated_audio.detach().cpu()
 
-    # Convert the waveform into a NumPy array
-    generated_audio = generated_audio.numpy()
-
-    # Find a natural quiet point near the requested duration
-    clean_end_sample = find_clean_end(
-        generated_audio,
-        requested_seconds,
+    # Convert the requested duration into waveform samples
+    target_sample_count = seconds_to_samples(
+        requested_seconds
     )
 
-    # End the waveform at the detected natural pause
+    # Keep only the requested amount of audio
     generated_audio = generated_audio[
-        :clean_end_sample
+        :target_sample_count
     ]
+
+    # Convert the waveform into a NumPy array
+    generated_audio = generated_audio.numpy()
 
     # Create the output folder if necessary
     Path(

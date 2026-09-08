@@ -102,10 +102,19 @@ def resample_training_audio(
 
     # Find every WAV training recording
     input_paths = sorted(
-        input_folder.glob(
-            "*.wav"
+        path
+        for path in input_folder.iterdir()
+        if (
+            path.is_file()
+            and path.suffix.lower() == ".wav"
         )
     )
+
+    # Make sure training audio was found
+    if not input_paths:
+        raise RuntimeError(
+            "No WAV training files were found in audio/training"
+        )
 
     # Process each training recording
     for input_path in input_paths:

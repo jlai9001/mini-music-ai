@@ -11,9 +11,9 @@ from audio_length import (
 )
 
 
-TEMPERATURE = 0.9
+TEMPERATURE = 1
 
-TOP_K = 20
+TOP_K = 50
 
 
 # Generate new EnCodec tokens using the trained Transformer

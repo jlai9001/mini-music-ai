@@ -3,7 +3,7 @@ from pathlib import Path
 import torch
 
 
-CONTEXT_LENGTH = 50
+CONTEXT_LENGTH = 150
 
 START_TOKEN_ID = 2048
 

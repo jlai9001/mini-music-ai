@@ -5,6 +5,7 @@ import torch
 from step4_train_model import CodecTransformer
 
 from audio_length import (
+    CLEAN_END_EXTRA_SECONDS,
     SAMPLE_RATE,
     seconds_to_tokens,
 )
@@ -82,9 +83,15 @@ def generate_tokens(
     # Switch the Transformer into generation mode
     model.eval()
 
-    # Convert the requested duration into EnCodec token positions
-    target_token_length = seconds_to_tokens(
+    # Add extra generation time so Step 6 can find a natural ending
+    generation_seconds = (
         seconds
+        + CLEAN_END_EXTRA_SECONDS
+    )
+
+    # Convert the extended duration into EnCodec token positions
+    target_token_length = seconds_to_tokens(
+        generation_seconds
     )
 
     # Begin with one START token for every EnCodec codebook
@@ -167,7 +174,8 @@ def generate_tokens(
     torch.save(
         {
             "audio_codes": generated_tokens,
-            "seconds": seconds,
+            "requested_seconds": seconds,
+            "generated_seconds": generation_seconds,
             "sample_rate": SAMPLE_RATE,
         },
         output_path,
@@ -185,6 +193,13 @@ def generate_tokens(
     print(
         "Requested duration:",
         seconds,
+        "seconds",
+    )
+
+    # Print how much audio was generated for clean-ending detection
+    print(
+        "Generated search duration:",
+        generation_seconds,
         "seconds",
     )
 

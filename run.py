@@ -106,6 +106,38 @@ def main():
             stable_model_path,
         )
 
+        # Create an archive folder for the completed training cycle
+        cycle_archive_folder = (
+            Path("outputs/training_cycles")
+            / backup_timestamp
+        )
+
+        cycle_archive_folder.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+        # Define the feedback and training artifacts from this cycle
+        cycle_artifacts = [
+            Path("outputs/feedback.json"),
+            Path("audio/accepted_training"),
+            Path("audio/accepted_training_resampled"),
+            Path("outputs/accepted_encoded"),
+            Path("outputs/accepted_training_sequences.pt"),
+            Path("outputs/accepted_transformer.pt"),
+        ]
+
+        # Archive each artifact that exists
+        for artifact_path in cycle_artifacts:
+            if artifact_path.exists():
+                shutil.move(
+                    str(artifact_path),
+                    str(
+                        cycle_archive_folder
+                        / artifact_path.name
+                    ),
+                )
+
         # Confirm the promotion
         print(
             "Accepted-trained model promoted to stable model."

@@ -311,6 +311,11 @@ def main():
         * 100
     )
 
+    # Print the total number of accepted generations
+    print(
+        f"Total accepted: {accepted_count}"
+    )
+
     print(
         f"Acceptance rate: {acceptance_rate:.1f}%"
     )

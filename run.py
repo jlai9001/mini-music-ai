@@ -241,6 +241,7 @@ def main():
         accepted_training_dataset_path = build_training_sequences(
             accepted_encoded_audio_paths,
             output_path="outputs/accepted_training_sequences.pt",
+            stride=25,
         )
 
         # Confirm that the accepted dataset is ready

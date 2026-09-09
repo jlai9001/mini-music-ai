@@ -12,7 +12,7 @@ def train_accepted_model(
     base_model_path,
     training_dataset_path,
     output_path="outputs/accepted_transformer.pt",
-    epochs=5,
+    epochs=1,
     batch_size=32,
 ):
     # Choose the GPU when CUDA is available
@@ -102,7 +102,7 @@ def train_accepted_model(
     # Use a small learning rate so the stable model changes gradually
     optimizer = torch.optim.AdamW(
         model.parameters(),
-        lr=0.0001,
+        lr=0.00001,
     )
 
     # Create the next-token prediction loss

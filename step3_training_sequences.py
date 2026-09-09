@@ -12,6 +12,7 @@ START_TOKEN_ID = 2048
 def build_training_sequences(
     encoded_paths,
     output_path="outputs/training_sequences.pt",
+    stride=1,
 ):
     # Store every Transformer input sequence
     input_sequences = []
@@ -80,10 +81,11 @@ def build_training_sequences(
 
             continue
 
-        # Slide across the recording one token position at a time
+        # Slide across the recording using the requested stride
         for start_index in range(
-            token_length
-            - CONTEXT_LENGTH
+            0,
+            token_length - CONTEXT_LENGTH,
+            stride,
         ):
             # Calculate the end of the input sequence
             input_end = (

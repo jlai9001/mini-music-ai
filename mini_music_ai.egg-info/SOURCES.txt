@@ -10,6 +10,8 @@ step4_train_model.py
 step5B_generate_ending.py
 step5_generate_tokens.py
 step6_audio_decoding.py
+step7_collect_accepted_audio.py
+step8_train_accepted_model.py
 mini_music_ai.egg-info/PKG-INFO
 mini_music_ai.egg-info/SOURCES.txt
 mini_music_ai.egg-info/dependency_links.txt

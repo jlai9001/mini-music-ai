@@ -32,4 +32,6 @@ py-modules = [
     "step5_generate_tokens",
     "step5B_generate_ending",
     "step6_audio_decoding",
+    "step7_collect_accepted_audio",
+    "step8_train_accepted_model",
 ]

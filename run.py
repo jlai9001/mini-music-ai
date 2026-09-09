@@ -52,6 +52,19 @@ def main():
         action="store_true",
     )
 
+    # Read the current stable model version
+    model_version_path = Path(
+        "models/model_version.txt"
+    )
+
+    # Use version 1 if the version file does not exist yet
+    if model_version_path.exists():
+        model_version = int(
+            model_version_path.read_text().strip()
+        )
+    else:
+        model_version = 1
+
     # Read the command-line arguments
     args = parser.parse_args()
 
@@ -141,6 +154,19 @@ def main():
         # Confirm the promotion
         print(
             "Accepted-trained model promoted to stable model."
+        )
+
+        # Advance to the next stable model version
+        new_model_version = model_version + 1
+
+        # Save the new stable model version
+        model_version_path.write_text(
+            str(new_model_version)
+        )
+
+        # Confirm the new stable model version
+        print(
+            f"Stable model version: v{new_model_version}"
         )
 
         print(
@@ -267,16 +293,29 @@ def main():
         "%Y%m%d_%H%M%S"
     )
 
+    # Create a versioned folder for this model's generations
+    generation_folder = Path(
+        f"outputs/generations/v{model_version}"
+    )
+
+    # Create the versioned generation folder if needed
+    generation_folder.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
     # Create a unique output path for this generation
     generated_audio_path = (
-        f"outputs/generations/"
-        f"generation_{generation_timestamp}.wav"
+        generation_folder
+        / f"generation_{generation_timestamp}.wav"
     )
 
     # Step 6: decode the final generated tokens
     decode_generated_audio(
         generated_tokens_for_decoding_path,
-        output_path=generated_audio_path,
+        output_path=str(
+            generated_audio_path
+        ),
     )
 
     # Ask the user whether this generation should be accepted or rejected
@@ -306,7 +345,9 @@ def main():
     # Add this generation to the feedback history
     feedback_history.append(
         {
-            "generation": generated_audio_path,
+            "generation": str(
+                generated_audio_path
+            ),
             "rating": rating,
             "seconds": args.seconds,
             "timestamp": generation_timestamp,
